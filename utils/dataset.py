@@ -58,9 +58,9 @@ def download_wavs(args):
     mini_data = args.mini_data
     
     if mini_data:
-        logs_dir = '_logs/download_dataset/{}'.format(get_filename(csv_path))
-    else:
         logs_dir = '_logs/download_dataset_minidata/{}'.format(get_filename(csv_path))
+    else:
+        logs_dir = '_logs/download_dataset/{}'.format(get_filename(csv_path))
     
     create_folder(audios_dir)
     create_folder(logs_dir)
@@ -73,12 +73,10 @@ def download_wavs(args):
     
     lines = lines[3:]   # Remove csv head info
 
-    if mini_data:
-        lines = lines[0 : 10]   # Download partial data for debug
-    
     download_time = time.time()
 
     # Download
+    downloaded = 0
     for (n, line) in enumerate(lines):
         
         items = line.split(', ')
@@ -88,7 +86,7 @@ def download_wavs(args):
         duration = end_time - start_time
         
         logging.info('{} {} start_time: {:.1f}, end_time: {:.1f}'.format(
-            n, audio_id, start_time, end_time))
+            downloaded, audio_id, start_time, end_time))
         
         # Download full video of whatever format
         video_name = os.path.join(audios_dir, '_Y{}.%(ext)s'.format(audio_id))
@@ -116,6 +114,11 @@ def download_wavs(args):
             
             logging.info("Download and convert to {}".format(audio_path))
                 
+            downloaded += 1
+            if mini_data:
+                if downloaded > 10:
+                    break
+
     logging.info('Download finished! Time spent: {:.3f} s'.format(
         time.time() - download_time))
 
@@ -201,7 +204,7 @@ if __name__ == '__main__':
     parser_download_wavs = subparsers.add_parser('download_wavs')
     parser_download_wavs.add_argument('--csv_path', type=str, required=True, help='Path of csv file containing audio info to be downloaded.')
     parser_download_wavs.add_argument('--audios_dir', type=str, required=True, help='Directory to save out downloaded audio.')
-    parser_download_wavs.add_argument('--mini_data', action='store_true', default=True, help='Set true to only download 10 audios for debugging.')
+    parser_download_wavs.add_argument('--mini_data', action='store_true', default=False, help='Set true to only download 10 audios for debugging.')
 
     parser_pack_wavs = subparsers.add_parser('pack_waveforms_to_hdf5')
     parser_pack_wavs.add_argument('--csv_path', type=str, required=True, help='Path of csv file containing audio info to be downloaded.')
