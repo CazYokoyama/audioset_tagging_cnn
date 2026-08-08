@@ -27,11 +27,13 @@ python3 utils/dataset.py split_unbalanced_csv_to_partial_csvs \
 echo "------ Download wavs ------"
 # Download evaluation wavs
 python3 utils/dataset.py download_wavs \
+    --mini_data \
     --csv_path=$DATASET_DIR"/metadata/eval_segments.csv" \
     --audios_dir=$DATASET_DIR"/audios/eval_segments"
 
 # Download balanced train wavs
 python3 utils/dataset.py download_wavs \
+    --mini_data \
     --csv_path=$DATASET_DIR"/metadata/balanced_train_segments.csv" \
     --audios_dir=$DATASET_DIR"/audios/balanced_train_segments"
 
@@ -41,6 +43,7 @@ python3 utils/dataset.py download_wavs \
 for IDX in {00..40}; do
   echo $IDX
   python utils/dataset.py download_wavs \
+    --mini_data \
     --csv_path=$DATASET_DIR"/metadata/unbalanced_partial_csvs/unbalanced_train_segments_part$IDX.csv" \
     --audios_dir=$DATASET_DIR"/audios/unbalanced_train_segments/unbalanced_train_segments_part$IDX"
 done
